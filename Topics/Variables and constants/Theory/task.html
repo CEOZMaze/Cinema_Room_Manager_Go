@@ -1,0 +1,45 @@
+<div class="step-text">
+<p>Declaring <strong>constants</strong> and <strong>variables </strong>is among the most common operations in many programming languages. You will have to deal with them often when you code, so let's learn what they are and how to use them.</p><p>A variable is a named place in memory where you can store data to access it later. It's like a box with a gift inside: you can consider it a kind of variable too!</p><p>Every variable has a name to distinguish it from other variables. It is possible to access a value by its name.</p><h5 id="declaring-a-variable">Declaring a variable</h5><p>You can use the <code class="language-go">var</code> keyword, followed by the variable name and type to declare a variable in Go:</p><pre><code class="language-go">var variableName variableType</code></pre><p>Variables declared without an explicit initial value are given their default or <strong>zero value</strong>. Below you can see the zero value for each data type:</p><pre><code class="language-go">var i int     // 0
+var f float64 // 0 
+var b bool    // false 
+var s string  // ""</code></pre><div class="alert alert-primary"><p>Generally, giving a variable a meaningful name that describes its content is a good coding practice.</p></div><p>Now, we can declare a variable and assign a value to it:</p><pre><code class="language-go">var firstNum int = 1</code></pre><p>For some data types, it is possible to skip the type, as the compiler will detect it automatically:</p><pre><code class="language-go">var secondNum = 20 // Skipping the type</code></pre><p>You can also use <code class="language-go">:=</code> in statements. It is a <strong>declare and assign </strong>construction:</p><pre><code class="language-go">thirdNum := 30</code></pre><p>Note that the <code class="language-go">:=</code> operator is exclusively used to declare and assign new variables. It means that you cannot use it to reassign values to existing variables alone; doing so will lead to a compile-time error:</p><pre><code class="language-go">fourthNum := 30
+fourthNum = 31  // OK — Assign a new value `31` to `fourthNum` 
+fourthNum := 32 // compile-time error! This variable is already declared</code></pre><p>However, if you add a new variable, there will be no error:</p><pre><code class="language-go">fourthNum, fifthNum := 32, 33 // no compile-time error</code></pre><h5 id="declaring-multiple-variables">Declaring multiple variables</h5><p>You can easily declare multiple variables of the same type on one line:</p><pre><code class="language-go">var isEnabled, hasValues, isOrdered bool</code></pre><p>And to declare multiple variables of different types, you can use a <strong>block of variables</strong>:</p><pre><code class="language-go">var (
+    isEnabled bool
+    hasValues bool
+    isOrdered bool
+    firstNum  int
+    hello     string
+)</code></pre><h5 id="constants">Constants</h5><p>A constant in Go can be defined with the <code class="language-go">const</code> keyword, followed by the name and, optionally, the type of the constant: </p><pre><code class="language-go">const pi = 3.141
+const hubble int = 77</code></pre><p>You can declare a <strong>block of constants</strong> at once without having to specify a keyword before each constant:</p><pre><code class="language-go">const ( 
+    hello = "Hello" 
+    e = 2.718
+)</code></pre><p>Constants have several advantages over variables. They make your code more readable and ensure that a specific value in the code remains unchanged. It doesn't matter much for small projects, but it certainly does for larger ones with numerous components contributed by multiple authors.</p><p>Besides, constants give the compiler a strong cue for optimization. Since the compiler knows that the value cannot be changed, it doesn't need to load the value from memory each time, and it can optimize the code to work only for the exact value of the constant.</p><pre><code class="language-go">const HoursPerDay = 24
+HoursPerDay = 25 // Cannot be assigned to `HoursPerDay`</code></pre><p>Moreover, constants can also serve as a defensive measure to protect you from yourself: for example, from accidentally changing a value somewhere in the code when you're working late at night or before you've had your coffee early in the morning.</p><h5 id="iota">Iota</h5><p>The <code class="language-go">iota</code> keyword is a handy auto-increment that generates constants. It constructs a set of related but distinct constants starting from <code class="language-go">0</code>.</p><p>It proves useful when you have to represent some property for which different distinct values are possible. To better explain how the auto-increment property of <code class="language-go">iota</code> works, let's take a look at the following example:</p><pre><code class="language-go">const (
+    A = iota  // 0
+    B = iota  // 1
+    C = iota  // 2
+)</code></pre><p>This step can be simplified as follows:</p><pre><code class="language-go">const (
+    A = iota // 0
+    B        // 1
+    C        // 2
+)</code></pre><p>It is also possible to skip values of <code class="language-go">iota</code> via the <code class="language-go">_ = iota</code> syntax; however, take notice that only the underscore <code class="language-go">_</code> character will skip the value. For example, suppose you wanted to skip the <code class="language-go">0</code> and <code class="language-go">2</code> values:</p><pre><code class="language-go">const (
+    _ = iota // Skip 0
+    A        // 1
+    _        // Skip 2
+    B        // 3
+    C        // 4
+)</code></pre><p>A simple use case for <code class="language-go">iota</code> would be if you wanted to define a constant for each day of the week. In this case, you want them all to be constants with different values. However, it doesn't matter what exact value each constant has as long as <code class="language-go">Monday</code> is different from <code class="language-go">Tuesday</code>, which is different from <code class="language-go">Wednesday</code>, and so on. You can write it the following way:</p><pre><code class="language-go">const (
+    Monday    = iota + 1 // Start from 1 instead of 0
+    Tuesday              // 2
+    Wednesday            // 3
+    Thursday             // 4
+    Friday               // 5
+    Saturday             // 6
+    Sunday               // 7
+)</code></pre><p>Take notice that the <code class="language-go">iota + 1</code> syntax makes the auto-increment start from <code class="language-go">1</code> instead of <code class="language-go">0</code>. As you can see,<code class="language-go">iota</code> provides a convenient way to generate different constants when the actual constant values are not that important.</p><div class="alert alert-primary"><p>This is essentially a standard enumeration, like in other programming languages.</p></div><p>One of the common uses of <code class="language-go">iota</code> is when we work with <a href="https://abdulapopoola.com/2016/05/30/understanding-bit-masks/" rel="noopener noreferrer nofollow" target="_blank">bitmasks</a> and want to change the permission of the files, like this:</p><pre><code class="language-go">const (
+    Read = 1 &lt;&lt; iota  // &lt;&lt; A bit operation
+    Write
+    Execute
+)</code></pre><p>Another way to do this is to make an enumeration, like in other languages, which we will cover in further topics.</p><h5 id="conclusion">Conclusion</h5><p>Variables and constants appear in every high-level language, and in this topic, you've learned how to declare and assign values to them in Go. You've also got to know about the unique <code class="language-go">iota</code> keyword used with constants to give an incrementing value to each of them.</p>
+</div>
